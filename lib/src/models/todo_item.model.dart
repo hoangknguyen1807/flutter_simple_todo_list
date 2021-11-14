@@ -1,7 +1,20 @@
+import 'package:hive/hive.dart';
+
+part 'todo_item.model.g.dart';
+
+@HiveType(typeId: 1)
 class ToDoItemModel {
+
+  @HiveField(0)
   String _title;
+
+  @HiveField(1)
   DateTime _occurTime;
+  
+  @HiveField(2)
   String _description;
+  
+  @HiveField(3)
   bool _isDone;
 
   ToDoItemModel.empty() :

@@ -1,8 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:simple_todo_list/src/commons/constants.dart' as constants;
 import 'package:simple_todo_list/src/models/todo_item.model.dart';
 
 class ToDoItemsProvider extends ChangeNotifier {
+
+  late Box _box;
 
   List<ToDoItemModel> _allItems = [];
   final List<ToDoItemModel> _todayItems = [];
@@ -11,6 +15,7 @@ class ToDoItemsProvider extends ChangeNotifier {
   final List<ToDoItemModel> _doneItems = [];
 
   ToDoItemsProvider(List<ToDoItemModel> allStoredItems) {    
+    _box = Hive.box(constants.todosBoxName);
     _allItems.addAll(allStoredItems);
     update();
   }
@@ -28,12 +33,12 @@ class ToDoItemsProvider extends ChangeNotifier {
 
   void add(ToDoItemModel item) {
     _allItems.add(item);
-    update();
+    saveToHive();
   }
 
   void remove(ToDoItemModel item) {
     _allItems.remove(item);
-    update();
+    saveToHive();
   }
 
   void update() {
@@ -60,6 +65,11 @@ class ToDoItemsProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  void saveToHive() {
+    update();
+    _box.put(constants.todoItemsKey, allItems);
   }
 
   List<ToDoItemModel> get todayItems => _todayItems;

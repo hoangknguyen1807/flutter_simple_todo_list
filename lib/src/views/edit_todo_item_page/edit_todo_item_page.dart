@@ -117,12 +117,12 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
     }
   }
 
-  bool _itemHasChanged() {
-    return !(_toDoModel.title == _titleController.text
+  bool _itemHasNotChanged() {
+    return _toDoModel.title == _titleController.text
         && _toDoModel.description == _descriptionController.text
         && DateUtils.isSameDay(_toDoModel.occurTime, _selectedDate)
         && _toDoModel.occurTime.hour == _selectedTime.hour
-        && _toDoModel.occurTime.minute == _selectedTime.minute);
+        && _toDoModel.occurTime.minute == _selectedTime.minute;
   }
 
   void _saveToDoItem() {
@@ -135,7 +135,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
         return;
     }
 
-    if (_itemHasChanged()) {
+    if (_itemHasNotChanged()) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text(
             'Nothing new to save.', style: TextStyle(fontSize: 18)
@@ -158,7 +158,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
     if (widget.isNewItem) {
       toDoItemsProvider.add(_toDoModel);
     } else {
-      toDoItemsProvider.update();
+      toDoItemsProvider.saveToHive();
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -169,7 +169,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
   }
 
   Future<bool> _onLeaving() async {
-    if (!_itemHasChanged()) {
+    if (_itemHasNotChanged()) {
       return true;
     }
     var result = await showDialog<bool>(

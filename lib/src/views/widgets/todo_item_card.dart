@@ -85,7 +85,7 @@ class _ToDoItemCardState extends State<ToDoItemCard> {
                   setState(() => _toDoModel.isDone = (value == true));
                   final toDoItemsProvider = context.read<ToDoItemsProvider>();
                   Future.delayed(const Duration(milliseconds: 750), () {
-                    toDoItemsProvider.update();
+                    toDoItemsProvider.saveToHive();
                   });
                 },
               )
