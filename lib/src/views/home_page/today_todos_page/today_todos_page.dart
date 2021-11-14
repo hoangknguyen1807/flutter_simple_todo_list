@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:simple_todo_list/src/models/todo_item.model.dart';
-import 'package:simple_todo_list/src/themes/styles.dart';
+import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
+import 'package:provider/provider.dart';
 
 class TodayToDosPage extends StatefulWidget {
   const TodayToDosPage({ Key? key }) : super(key: key);
@@ -17,13 +17,11 @@ class _TodayToDosPageState extends State<TodayToDosPage> {
   final dateFormat = DateFormat.yMMMEd();
   final today = DateTime.now();
 
-   final todayToDoItems = [
-    ToDoItemModel('Exercise', DateTime(2021, 11, 14, 17, 30)),
-    ToDoItemModel('Read book', DateTime(2021, 11, 14, 19, 0))
-  ];
-
   @override
   Widget build(BuildContext context) {
+    var toDoItemsProvider = context.watch<ToDoItemsProvider>();
+    var todayItems = toDoItemsProvider.todayItems;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Today'),
@@ -42,8 +40,8 @@ class _TodayToDosPageState extends State<TodayToDosPage> {
               padding: const EdgeInsets.all(12),
               color: Colors.white54,
               child: Text(dateFormat.format(today),
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600,
-                  color: Styles.upcomingTextColor)),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,
+                  color: Theme.of(context).primaryColor)),
             ),
             const Divider(thickness: 1, height: 2),
             Container(
@@ -51,7 +49,7 @@ class _TodayToDosPageState extends State<TodayToDosPage> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    for (var toDoItem in todayToDoItems)
+                    for (var toDoItem in todayItems)
                     ToDoItemCard(toDoItem)
                   ],
                 ),

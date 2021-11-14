@@ -1,9 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_todo_list/src/models/todo_item.model.dart';
+import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
+import 'package:simple_todo_list/src/utils/navigator_utils.dart';
+import 'package:simple_todo_list/src/views/home_page/done_todos_page/done_todos_page.dart';
+import 'package:simple_todo_list/src/views/home_page/upcoming_todos_page/upcoming_todos_page.dart';
+
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
+
+import 'today_todos_page/today_todos_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({ Key? key }) : super(key: key);
@@ -14,16 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-
-  final nowDate = DateTime.now();
-
-  final allToDoItems = [
-    ToDoItemModel('Go to sleep', DateTime(2021, 11, 13, 22), true),
-    ToDoItemModel('English class', DateTime(2021, 11, 16, 14, 0), false, 'Learn on Zoom'),
-    ToDoItemModel('Exercise', DateTime(2021, 11, 15, 17, 30)),
-    ToDoItemModel('Exercise', DateTime(2021, 11, 15, 17, 30)),
-    ToDoItemModel('Read book', DateTime(2021, 11, 14, 19, 0))
-  ];
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -32,6 +31,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var toDoItemsProvider = context.watch<ToDoItemsProvider>();
+    List<ToDoItemModel> allToDoItems = toDoItemsProvider.allItems;
+
+    final int todayCount = toDoItemsProvider.todayItems.length;
+    final int upcomingCount = toDoItemsProvider.upcomingItems.length;
+    final int doneCount = toDoItemsProvider.doneItems.length; 
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 64,
@@ -45,6 +51,15 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
+          IconButton(icon: const Icon(CupertinoIcons.refresh_thick),
+            onPressed: () {
+              _isLoading = true;
+              context.read<ToDoItemsProvider>().update();
+              Future.delayed(const Duration(milliseconds: 750), () {
+                setState(() => _isLoading = false);
+              });
+            },
+          ),
           IconButton(
             onPressed: () {},
             icon: const Icon(CupertinoIcons.bell, size: 28)
@@ -55,7 +70,18 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(8),
-          child: Column(
+          child: (_isLoading)
+          ? const Center(
+              child: SizedBox(
+                height: 80.0,
+                width: 80.0,
+                child: CircularProgressIndicator(
+                  value: null,
+                  strokeWidth: 6.0,
+                ),
+              ),
+          )
+          : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -73,26 +99,33 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         ListTile(
                           onTap: () {
-                            Navigator.of(context).pushNamed('/today');
+                            NavigatorUtils.navigateToScreen(
+                              context, const TodayToDosPage());
                           },
-                          leading: Text('${nowDate.day}',
-                            style: TextStyle(fontSize: 20)),
-                          title: Text('Today'),
-                          trailing: Text('2')
+                          leading: Text('${DateTime.now().day}',
+                            style: const TextStyle(fontSize: 20)),
+                          title: const Text('Today'),
+                          trailing: Text('$todayCount')
                         ),
                         const Divider(height: 1, thickness: 1),
                         ListTile(
-                          onTap: () {},
-                          leading: Icon(CupertinoIcons.calendar_today),
-                          title: Text('Upcoming'),
-                          trailing: Text('2')
+                          onTap: () {
+                            NavigatorUtils.navigateToScreen(
+                              context, const UpcomingToDosPage());
+                          },
+                          leading: const Icon(CupertinoIcons.calendar_today),
+                          title: const Text('Upcoming'),
+                          trailing: Text('$upcomingCount')
                         ),
                         const Divider(height: 1, thickness: 1),
                         ListTile(
-                          onTap: () {},
-                          leading: Icon(CupertinoIcons.check_mark_circled),
-                          title: Text('Done'),
-                          trailing: Text('4')
+                          onTap: () {
+                            NavigatorUtils.navigateToScreen(
+                              context, const DoneToDosPage());
+                          },
+                          leading: const Icon(CupertinoIcons.check_mark_circled),
+                          title: const Text('Done'),
+                          trailing: Text('$doneCount')
                         ),
                       ]
                     ),

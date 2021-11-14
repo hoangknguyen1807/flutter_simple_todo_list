@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_todo_list/src/models/todo_item.model.dart';
+import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
 import 'package:simple_todo_list/src/utils/navigator_utils.dart';
 import 'package:simple_todo_list/src/views/edit_todo_item_page/edit_todo_item_page.dart';
@@ -80,6 +82,10 @@ class _ToDoItemCardState extends State<ToDoItemCard> {
                 shape: const CircleBorder(side: BorderSide(width: 0.0)),
                 onChanged: (value) {
                   setState(() => _toDoModel.isDone = (value == true));
+                  final toDoItemsProvider = context.read<ToDoItemsProvider>();
+                  Future.delayed(const Duration(milliseconds: 750), () {
+                    toDoItemsProvider.update();
+                  });
                 },
               )
             ),

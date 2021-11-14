@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/models/todo_item.model.dart';
+import 'package:provider/provider.dart';
+import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 
 class EditToDoItemPage extends StatefulWidget {
   const EditToDoItemPage(this.toDoModel, { Key? key }) : super(key: key);
@@ -137,6 +139,8 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
       _selectedTime.hour,
       _selectedTime.minute
     );
+
+    context.read<ToDoItemsProvider>().update();
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text(
