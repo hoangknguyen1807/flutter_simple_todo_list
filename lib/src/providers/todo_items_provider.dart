@@ -12,7 +12,6 @@ class ToDoItemsProvider extends ChangeNotifier {
 
   ToDoItemsProvider(List<ToDoItemModel> allStoredItems) {    
     _allItems.addAll(allStoredItems);
-
     update();
   }
 
@@ -29,11 +28,12 @@ class ToDoItemsProvider extends ChangeNotifier {
 
   void add(ToDoItemModel item) {
     _allItems.add(item);
-    notifyListeners();
+    update();
   }
 
   void remove(ToDoItemModel item) {
     _allItems.remove(item);
+    update();
   }
 
   void update() {

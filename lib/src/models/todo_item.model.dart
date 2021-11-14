@@ -1,8 +1,14 @@
 class ToDoItemModel {
-  String _title = '';
-  DateTime _occurTime = DateTime.now();
-  String _description = '';
+  String _title;
+  DateTime _occurTime;
+  String _description;
   bool _isDone;
+
+  ToDoItemModel.empty() :
+    _title = '',
+    _occurTime = DateTime.now(),
+    _description = '',
+    _isDone = false;
 
   ToDoItemModel(
     this._title, this._occurTime,

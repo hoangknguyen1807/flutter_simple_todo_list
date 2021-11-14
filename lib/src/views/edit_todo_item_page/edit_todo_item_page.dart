@@ -6,9 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 
 class EditToDoItemPage extends StatefulWidget {
-  const EditToDoItemPage(this.toDoModel, { Key? key }) : super(key: key);
+  const EditToDoItemPage(this.toDoModel, {this.isNewItem = false, Key? key }) : super(key: key);
 
   final ToDoItemModel toDoModel;
+  final bool isNewItem;
 
   @override
   _EditToDoItemPageState createState() => _EditToDoItemPageState();
@@ -117,6 +118,15 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
   }
 
   void _saveToDoItem() {
+    if (_titleController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(
+            'Cannot save a task with empty title!', style: TextStyle(fontSize: 18)
+            ))
+        );
+        return;
+    }
+
     if (_toDoModel.title == _titleController.text
         && _toDoModel.description == _descriptionController.text
         && DateUtils.isSameDay(_toDoModel.occurTime, _selectedDate)
@@ -140,7 +150,12 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
       _selectedTime.minute
     );
 
-    context.read<ToDoItemsProvider>().update();
+    final toDoItemsProvider = context.read<ToDoItemsProvider>();
+    if (widget.isNewItem) {
+      toDoItemsProvider.add(_toDoModel);
+    } else {
+      toDoItemsProvider.update();
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text(
@@ -180,6 +195,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
+        title: widget.isNewItem ? const Text('New ToDo') : null,
         actions: [
           IconButton(onPressed: _saveToDoItem,
             icon: const Icon(CupertinoIcons.floppy_disk, size: 26)),

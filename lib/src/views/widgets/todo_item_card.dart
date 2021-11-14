@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
@@ -107,7 +108,11 @@ class _ToDoItemCardState extends State<ToDoItemCard> {
                 ],
               ),
             )),
-
+            Container(
+              padding: const EdgeInsets.only(top: 16, right: 16),
+              alignment: Alignment.center,
+              child: const Icon(Icons.edit, size: 20, color: Colors.grey)
+            )
           ],
         )
       ),
