@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
+import 'package:simple_todo_list/src/themes/styles.dart';
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 import 'package:provider/provider.dart';
 
@@ -40,8 +41,8 @@ class _TodayToDosPageState extends State<TodayToDosPage> {
               padding: const EdgeInsets.all(12),
               color: Colors.white54,
               child: Text(dateFormat.format(today),
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,
-                  color: Theme.of(context).primaryColor)),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600,
+                  color: Styles.upcomingTextColor)),
             ),
             const Divider(thickness: 1, height: 2),
             Container(

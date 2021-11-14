@@ -117,6 +117,14 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
     }
   }
 
+  bool _itemHasChanged() {
+    return !(_toDoModel.title == _titleController.text
+        && _toDoModel.description == _descriptionController.text
+        && DateUtils.isSameDay(_toDoModel.occurTime, _selectedDate)
+        && _toDoModel.occurTime.hour == _selectedTime.hour
+        && _toDoModel.occurTime.minute == _selectedTime.minute);
+  }
+
   void _saveToDoItem() {
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -127,11 +135,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
         return;
     }
 
-    if (_toDoModel.title == _titleController.text
-        && _toDoModel.description == _descriptionController.text
-        && DateUtils.isSameDay(_toDoModel.occurTime, _selectedDate)
-        && _toDoModel.occurTime.hour == _selectedTime.hour
-        && _toDoModel.occurTime.minute == _selectedTime.minute) {
+    if (_itemHasChanged()) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text(
             'Nothing new to save.', style: TextStyle(fontSize: 18)
@@ -164,6 +168,39 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
     );
   }
 
+  Future<bool> _onLeaving() async {
+    if (!_itemHasChanged()) {
+      return true;
+    }
+    var result = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              elevation: 2.0,
+              title: const Text(
+                  'Discard changes',
+                  style: TextStyle(fontStyle: FontStyle.normal)),
+              content: const Text(
+                  "Leaving now will discard your changes. Still leave?"),
+              actions: [
+                TextButton(
+                  style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all(Colors.red)),
+                  child: const Text('YES'),
+                  onPressed: () async {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                TextButton(
+                  child: const Text('NO'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                )
+              ],
+            ));
+    return result == true;
+  }
+
   @override
   void initState() {
     _toDoModel = widget.toDoModel;
@@ -192,63 +229,66 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 1,
-        title: widget.isNewItem ? const Text('New ToDo') : null,
-        actions: [
-          IconButton(onPressed: _saveToDoItem,
-            icon: const Icon(CupertinoIcons.floppy_disk, size: 26)),
-          const SizedBox(width: 4)
-        ],
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(12),
-        child: Column(children: [
-          TextField(
-            decoration: const InputDecoration(
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-              hintText: 'Title',
-              hintStyle: TextStyle(fontSize: 20),
+    return WillPopScope(
+      onWillPop: _onLeaving,
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 1,
+          title: widget.isNewItem ? const Text('New ToDo') : null,
+          actions: [
+            IconButton(onPressed: _saveToDoItem,
+              icon: const Icon(CupertinoIcons.floppy_disk, size: 26)),
+            const SizedBox(width: 4)
+          ],
+        ),
+        body: Container(
+          padding: const EdgeInsets.all(12),
+          child: Column(children: [
+            TextField(
+              decoration: const InputDecoration(
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
+                hintText: 'Title',
+                hintStyle: TextStyle(fontSize: 20),
+              ),
+              cursorColor: Colors.blue,
+              controller: _titleController,        
+              style: const TextStyle(fontSize: 20),
             ),
-            cursorColor: Colors.blue,
-            controller: _titleController,        
-            style: const TextStyle(fontSize: 20),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            onTap: _selectDate,
-            decoration: const InputDecoration(
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-              prefixIcon: Icon(CupertinoIcons.calendar, size: 26)
+            const SizedBox(height: 8),
+            TextField(
+              onTap: _selectDate,
+              decoration: const InputDecoration(
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
+                prefixIcon: Icon(CupertinoIcons.calendar, size: 26)
+              ),
+              readOnly: true,
+              controller: _dateController,
             ),
-            readOnly: true,
-            controller: _dateController,
-          ),
-          TextField(
-            onTap: _selectTime,
-            decoration: const InputDecoration(
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-              prefixIcon: Icon(CupertinoIcons.time, size: 26)
+            TextField(
+              onTap: _selectTime,
+              decoration: const InputDecoration(
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
+                prefixIcon: Icon(CupertinoIcons.time, size: 26)
+              ),
+              readOnly: true,
+              controller: _timeController,
             ),
-            readOnly: true,
-            controller: _timeController,
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            maxLines: 30,
-            minLines: 12,
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(borderSide: BorderSide.none),
-              focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-              hintText: 'Description',
-              hintStyle: TextStyle(fontSize: 16),
+            const SizedBox(height: 8),
+            TextField(
+              maxLines: 30,
+              minLines: 12,
+              decoration: const InputDecoration(
+                border: UnderlineInputBorder(borderSide: BorderSide.none),
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
+                hintText: 'Description',
+                hintStyle: TextStyle(fontSize: 16),
+              ),
+              cursorColor: Colors.blue,
+              controller: _descriptionController,        
+              style: const TextStyle(fontSize: 16),
             ),
-            cursorColor: Colors.blue,
-            controller: _descriptionController,        
-            style: const TextStyle(fontSize: 16),
-          ),
-        ]),
+          ]),
+        ),
       ),
     );
   }

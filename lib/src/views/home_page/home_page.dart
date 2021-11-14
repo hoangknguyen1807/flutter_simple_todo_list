@@ -46,8 +46,7 @@ class _HomePageState extends State<HomePage> {
       margin: const EdgeInsets.only(top: 8),
       alignment: Alignment.center,
       padding: const EdgeInsets.only(left: 10, right: 10),
-      child: ListView(
-          shrinkWrap: true,
+      child: Column(
           children: [
             ListTile(
               onTap: () {
@@ -98,7 +97,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var toDoItemsProvider = context.watch<ToDoItemsProvider>();
-    List<ToDoItemModel> allToDoItems = toDoItemsProvider.allItems;
+    final List<ToDoItemModel> todayItems = toDoItemsProvider.todayItems;
+    final List<ToDoItemModel> upcomingItems = toDoItemsProvider.upcomingItems;
+    final List<ToDoItemModel> overdueItems = toDoItemsProvider.pastItems;
 
     return Scaffold(
       appBar: AppBar(
@@ -159,8 +160,12 @@ class _HomePageState extends State<HomePage> {
                   child: SingleChildScrollView(
                     child: Column(children: [
                       const SizedBox(height: 16),
-                      for (var toDoItem in allToDoItems)
-                      ToDoItemCard(toDoItem),
+                      for (var toDoItem in overdueItems)
+                        ToDoItemCard(toDoItem),
+                      for (var toDoItem in todayItems)
+                        ToDoItemCard(toDoItem),
+                      for (var toDoItem in upcomingItems)
+                        ToDoItemCard(toDoItem),
                     ]),
                   ),
                 ),

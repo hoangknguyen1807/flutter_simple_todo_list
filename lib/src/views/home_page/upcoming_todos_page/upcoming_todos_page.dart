@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
+import 'package:simple_todo_list/src/themes/styles.dart';
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 import 'package:provider/provider.dart';
 
@@ -23,7 +24,7 @@ class _UpcomingToDosPageState extends State<UpcomingToDosPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Done'),
+        title: const Text('Upcoming'),
         actions: [
           IconButton(
             icon: const Icon(CupertinoIcons.search, size: 24),
@@ -38,9 +39,9 @@ class _UpcomingToDosPageState extends State<UpcomingToDosPage> {
             Container(
               padding: const EdgeInsets.all(12),
               color: Colors.white54,
-              child: Text("Be ahead of the schedule?",
+              child: const Text("Be ahead of the schedule?",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,
-                  color: Theme.of(context).primaryColor)),
+                  color: Styles.futureTextColor)),
             ),
             const Divider(thickness: 1, height: 2),
             Container(
