@@ -35,6 +35,8 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
 
   late TimeOfDay _selectedTime;
 
+  late bool _isItemDone;
+
   void _selectDate() async {
     final ThemeData theme = Theme.of(context);
     switch (theme.platform) {
@@ -119,7 +121,8 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
   }
 
   bool _itemHasNotChanged() {
-    return _toDoModel.title == _titleController.text
+    return _toDoModel.isDone == _isItemDone
+        && _toDoModel.title == _titleController.text
         && _toDoModel.description == _descriptionController.text
         && DateUtils.isSameDay(_toDoModel.occurTime, _selectedDate)
         && _toDoModel.occurTime.hour == _selectedTime.hour
@@ -154,6 +157,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
       _selectedTime.hour,
       _selectedTime.minute
     );
+    _toDoModel.isDone = _isItemDone;
 
     final toDoItemsProvider = context.read<ToDoItemsProvider>();
     if (widget.isNewItem) {
@@ -259,6 +263,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
     _timeController = TextEditingController.fromValue(
             TextEditingValue(text: timeFormat.format(_selectedDate)));
     _selectedTime = TimeOfDay.fromDateTime(_toDoModel.occurTime);
+    _isItemDone = _toDoModel.isDone;
     
     super.initState();
   }
@@ -296,8 +301,8 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
               height: 50,
               child: Row(crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Checkbox(value: _toDoModel.isDone, onChanged: (newValue) {
-                    setState(() => _toDoModel.isDone = (newValue == true));
+                  Checkbox(value: _isItemDone, onChanged: (newValue) {
+                    setState(() => _isItemDone = (newValue == true));
                   }),
                   const SizedBox(width: 8),
                   Expanded(
@@ -310,7 +315,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
                       cursorColor: Colors.blue,
                       controller: _titleController,        
                       style: TextStyle(fontSize: 20,
-                        decoration: (_toDoModel.isDone) ? TextDecoration.lineThrough: null,
+                        decoration: (_isItemDone) ? TextDecoration.lineThrough: null,
                         decorationStyle: TextDecorationStyle.double
                       ),
                     ),
