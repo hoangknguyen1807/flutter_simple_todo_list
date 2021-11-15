@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/models/todo_item.model.dart';
 import 'package:provider/provider.dart';
@@ -157,6 +158,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
     final toDoItemsProvider = context.read<ToDoItemsProvider>();
     if (widget.isNewItem) {
       toDoItemsProvider.add(_toDoModel);
+      Navigator.of(context).pop();
     } else {
       toDoItemsProvider.saveToHive();
     }
@@ -166,6 +168,49 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
         'ToDo item saved!', style: TextStyle(fontSize: 18)
         ))
     );
+  }
+
+  void _deleteToDoItem() async {
+    var result = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+              elevation: 2.0,
+              title: const Text(
+                  'Deleting ToDo item',
+                  style: TextStyle(fontStyle: FontStyle.normal)),
+              content: const Text(
+                  "Are you sure you want to delete this ToDo?"),
+              actions: [
+                TextButton(
+                  style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all(Colors.red)),
+                  child: const Text('YES'),
+                  onPressed: () async {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                TextButton(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all(Colors.blue)
+                  ),
+                  child: const Text('NO'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                )
+              ],
+            ));
+    if (result == true) {
+      final toDoItemsProvider = context.read<ToDoItemsProvider>();
+      toDoItemsProvider.remove(_toDoModel);
+
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(
+          'ToDo item deleted!', style: TextStyle(fontSize: 18)
+          ))
+      );
+    }
   }
 
   Future<bool> _onLeaving() async {
@@ -238,21 +283,40 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
           actions: [
             IconButton(onPressed: _saveToDoItem,
               icon: const Icon(CupertinoIcons.floppy_disk, size: 26)),
+            if (!widget.isNewItem)
+              IconButton(onPressed: _deleteToDoItem,
+                icon: const Icon(CupertinoIcons.delete_solid)),
             const SizedBox(width: 4)
           ],
         ),
         body: Container(
           padding: const EdgeInsets.all(12),
           child: Column(children: [
-            TextField(
-              decoration: const InputDecoration(
-                focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
-                hintText: 'Title',
-                hintStyle: TextStyle(fontSize: 20),
+            SizedBox(
+              height: 50,
+              child: Row(crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Checkbox(value: _toDoModel.isDone, onChanged: (newValue) {
+                    setState(() => _toDoModel.isDone = (newValue == true));
+                  }),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide.none),
+                        hintText: 'Title',
+                        hintStyle: TextStyle(fontSize: 20),
+                      ),
+                      cursorColor: Colors.blue,
+                      controller: _titleController,        
+                      style: TextStyle(fontSize: 20,
+                        decoration: (_toDoModel.isDone) ? TextDecoration.lineThrough: null,
+                        decorationStyle: TextDecorationStyle.double
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              cursorColor: Colors.blue,
-              controller: _titleController,        
-              style: const TextStyle(fontSize: 20),
             ),
             const SizedBox(height: 8),
             TextField(

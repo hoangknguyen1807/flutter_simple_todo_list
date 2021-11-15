@@ -50,7 +50,7 @@ class _UpcomingToDosPageState extends State<UpcomingToDosPage> {
                 child: Column(
                   children: [
                     for (var toDoItem in upcomingItems)
-                    ToDoItemCard(toDoItem)
+                      ToDoItemCard(toDoItem, key: UniqueKey())
                   ],
                 ),
               ),

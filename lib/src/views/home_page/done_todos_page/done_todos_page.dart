@@ -19,7 +19,7 @@ class _DoneToDosPageState extends State<DoneToDosPage> {
   @override
   Widget build(BuildContext context) {
     var toDoItemsProvider = context.watch<ToDoItemsProvider>();
-    var doneItems = toDoItemsProvider.doneItems;
+    final doneItems = toDoItemsProvider.doneItems;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,7 +49,7 @@ class _DoneToDosPageState extends State<DoneToDosPage> {
                 child: Column(
                   children: [
                     for (var toDoItem in doneItems)
-                    ToDoItemCard(toDoItem)
+                      ToDoItemCard(toDoItem, key: UniqueKey())
                   ],
                 ),
               ),

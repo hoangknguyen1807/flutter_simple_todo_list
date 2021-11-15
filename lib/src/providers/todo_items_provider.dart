@@ -8,7 +8,7 @@ class ToDoItemsProvider extends ChangeNotifier {
 
   late Box _box;
 
-  List<ToDoItemModel> _allItems = [];
+  final List<ToDoItemModel> _allItems = [];
   final List<ToDoItemModel> _todayItems = [];
   final List<ToDoItemModel> _pastItems = [];
   final List<ToDoItemModel> _upcomingItems = [];
@@ -27,7 +27,8 @@ class ToDoItemsProvider extends ChangeNotifier {
   List<ToDoItemModel> get allItems => _allItems;
 
   set allItems(List<ToDoItemModel> allItems) {
-    _allItems = allItems;
+    _allItems.clear();
+    _allItems.addAll(allItems);
     notifyListeners();
   }
 
@@ -49,17 +50,17 @@ class ToDoItemsProvider extends ChangeNotifier {
     _pastItems.clear();
     _upcomingItems.clear();
 
-    final today = DateTime.now();
+    final now = DateTime.now();
     for (var item in _allItems) {
       if (item.isDone) {
         _doneItems.add(item);
-      } else if (DateUtils.isSameDay(item.occurTime, today)) {
-        _todayItems.add(item);
+      } else if (item.occurTime.isBefore(now)) {
+        _pastItems.add(item);
       } else {
-        if (item.occurTime.isAfter(today)) {
-          _upcomingItems.add(item);
+        if (DateUtils.isSameDay(item.occurTime, now)) {
+          _todayItems.add(item);
         } else {
-          _pastItems.add(item);
+          _upcomingItems.add(item);
         }
       }
     }

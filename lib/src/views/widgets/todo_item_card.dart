@@ -68,6 +68,7 @@ class _ToDoItemCardState extends State<ToDoItemCard> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ToDoItemsProvider>();
     return GestureDetector(
       onTap: () {
         NavigatorUtils.navigateToScreen(context, EditToDoItemPage(_toDoModel));
@@ -111,7 +112,7 @@ class _ToDoItemCardState extends State<ToDoItemCard> {
             Container(
               padding: const EdgeInsets.only(top: 16, right: 16),
               alignment: Alignment.center,
-              child: const Icon(Icons.edit, size: 20, color: Colors.grey)
+              child: const Icon(Icons.edit, size: 24, color: Colors.grey)
             )
           ],
         )

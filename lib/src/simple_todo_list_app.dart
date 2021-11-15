@@ -27,7 +27,7 @@ class _SimpleToDoListAppState extends State<SimpleToDoListApp> {
     ToDoItemModel('Exercise', DateTime(2021, 11, 15, 17, 30)),
     ToDoItemModel('Read book', DateTime(2021, 11, 14, 19, 0)),
     ToDoItemModel('Read book', DateTime(2021, 11, 18, 19, 0)),
-    ToDoItemModel('Read book', DateTime(2021, 11, 19, 19, 0))
+    ToDoItemModel('Go jogging', DateTime(2021, 11, 19, 6, 0))
   ]);
 
   @override

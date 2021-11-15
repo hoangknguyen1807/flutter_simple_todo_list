@@ -51,7 +51,7 @@ class _TodayToDosPageState extends State<TodayToDosPage> {
                 child: Column(
                   children: [
                     for (var toDoItem in todayItems)
-                    ToDoItemCard(toDoItem)
+                      ToDoItemCard(toDoItem, key: UniqueKey())
                   ],
                 ),
               ),

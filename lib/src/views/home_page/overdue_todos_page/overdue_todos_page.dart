@@ -49,7 +49,7 @@ class _OverdueToDosPageState extends State<OverdueToDosPage> {
                 child: Column(
                   children: [
                     for (var toDoItem in pastItems)
-                    ToDoItemCard(toDoItem)
+                      ToDoItemCard(toDoItem, key: UniqueKey())
                   ],
                 ),
               ),

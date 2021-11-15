@@ -54,7 +54,10 @@ class _HomePageState extends State<HomePage> {
                   context, const TodayToDosPage());
               },
               leading: Text('${DateTime.now().day}',
-                style: const TextStyle(fontSize: 20)),
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Styles.upcomingTextColor)
+                ),
               title: const Text('Today'),
               trailing: Text('$todayCount')
             ),
@@ -64,7 +67,8 @@ class _HomePageState extends State<HomePage> {
                 NavigatorUtils.navigateToScreen(
                   context, const UpcomingToDosPage());
               },
-              leading: const Icon(CupertinoIcons.calendar_today),
+              leading: const Icon(CupertinoIcons.calendar_today,
+                color: Styles.futureTextColor),
               title: const Text('Upcoming'),
               trailing: Text('$upcomingCount')
             ),
@@ -74,7 +78,8 @@ class _HomePageState extends State<HomePage> {
                 NavigatorUtils.navigateToScreen(
                   context, const DoneToDosPage());
               },
-              leading: const Icon(CupertinoIcons.check_mark_circled),
+              leading: const Icon(CupertinoIcons.check_mark_circled,
+                color: Colors.green),
               title: const Text('Done'),
               trailing: Text('$doneCount')
             ),
@@ -84,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                 NavigatorUtils.navigateToScreen(
                   context, const OverdueToDosPage());
               },
-              leading: const Icon(Icons.timer),
+              leading: const Icon(Icons.timer, color: Styles.overdueTextColor),
               title: const Text('Overdue'),
               trailing: Text('$overdueCount')
             ),
@@ -100,6 +105,7 @@ class _HomePageState extends State<HomePage> {
     final List<ToDoItemModel> todayItems = toDoItemsProvider.todayItems;
     final List<ToDoItemModel> upcomingItems = toDoItemsProvider.upcomingItems;
     final List<ToDoItemModel> overdueItems = toDoItemsProvider.pastItems;
+    final List<ToDoItemModel> doneItems = toDoItemsProvider.doneItems;
 
     return Scaffold(
       appBar: AppBar(
@@ -129,7 +135,20 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {},
             icon: const Icon(CupertinoIcons.bell, size: 28)
           ),
-          const SizedBox(width: 6)
+          // PopupMenuButton(
+          //   enableFeedback: true,
+          //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+          //   child: const Icon(Icons.more_vert_rounded),
+          //   itemBuilder: (context) {
+          //     return const [
+          //       PopupMenuItem(
+          //         height: 32,
+          //         padding: EdgeInsets.only(left: 14, top: 6, bottom: 6, right: 0),
+          //         child: Text('Delete')
+          //       )
+          //     ];
+          // }),
+          const SizedBox(width: 8)
         ],
       ),
       body: SafeArea(
@@ -161,11 +180,14 @@ class _HomePageState extends State<HomePage> {
                     child: Column(children: [
                       const SizedBox(height: 16),
                       for (var toDoItem in overdueItems)
-                        ToDoItemCard(toDoItem),
+                        ToDoItemCard(toDoItem, key: UniqueKey()),
                       for (var toDoItem in todayItems)
-                        ToDoItemCard(toDoItem),
+                        ToDoItemCard(toDoItem, key: UniqueKey()),
                       for (var toDoItem in upcomingItems)
-                        ToDoItemCard(toDoItem),
+                        ToDoItemCard(toDoItem, key: UniqueKey()),
+                      for (var toDoItem in doneItems)
+                        ToDoItemCard(toDoItem, key: UniqueKey()),
+                      const SizedBox(height: 48)
                     ]),
                   ),
                 ),
