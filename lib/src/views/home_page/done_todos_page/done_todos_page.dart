@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
+import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.dart';
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,8 @@ class DoneToDosPage extends StatefulWidget {
   _DoneToDosPageState createState() => _DoneToDosPageState();
 }
 
-class _DoneToDosPageState extends State<DoneToDosPage> {
+class _DoneToDosPageState extends State<DoneToDosPage>
+  with HasSearchBoxInAppBar {
 
   final dateFormat = DateFormat.yMMMEd();
 
@@ -23,16 +25,22 @@ class _DoneToDosPageState extends State<DoneToDosPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Done'),
+        title: (!isSearching) ? const Text('Done')
+          : buildSearchBoxAppBar(onChanged: (value) {
+              updateSearchResult(value,
+                    context.read<ToDoItemsProvider>().doneItems);
+              setState(() => query = value);
+          }),
         actions: [
-          IconButton(
-            icon: const Icon(CupertinoIcons.search, size: 24),
-            onPressed: () {
-            },),
+          buildSearchIconButton(onPressed: () {
+            setState(() => toggleSearch());
+          })
         ],
       ),
       body: SafeArea(
-        child: Column(
+        child: (query.isNotEmpty)
+        ? buildSearchToDoResult()
+        : Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
+import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.dart';
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,8 @@ class OverdueToDosPage extends StatefulWidget {
   _OverdueToDosPageState createState() => _OverdueToDosPageState();
 }
 
-class _OverdueToDosPageState extends State<OverdueToDosPage> {
+class _OverdueToDosPageState extends State<OverdueToDosPage>
+  with HasSearchBoxInAppBar {
 
   final dateFormat = DateFormat.yMMMEd();
 
@@ -23,16 +25,22 @@ class _OverdueToDosPageState extends State<OverdueToDosPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Overdue'),
+        title: (!isSearching) ? const Text('Overdue')
+         : buildSearchBoxAppBar(onChanged: (value) {
+              updateSearchResult(value,
+                      context.read<ToDoItemsProvider>().pastItems);
+              setState(() => query = value);
+         }),
         actions: [
-          IconButton(
-            icon: const Icon(CupertinoIcons.search, size: 24),
-            onPressed: () {
-            },),
+          buildSearchIconButton(onPressed: () {
+            setState(() => toggleSearch());
+          })
         ],
       ),
       body: SafeArea(
-        child: Column(
+        child: (query.isNotEmpty)
+        ? buildSearchToDoResult()
+        : Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
+import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.dart';
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,8 @@ class UpcomingToDosPage extends StatefulWidget {
   _UpcomingToDosPageState createState() => _UpcomingToDosPageState();
 }
 
-class _UpcomingToDosPageState extends State<UpcomingToDosPage> {
+class _UpcomingToDosPageState extends State<UpcomingToDosPage>
+  with HasSearchBoxInAppBar {
 
   final dateFormat = DateFormat.yMMMEd();
 
@@ -24,16 +26,22 @@ class _UpcomingToDosPageState extends State<UpcomingToDosPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Upcoming'),
+        title: (!isSearching) ? const Text('Upcoming')
+        : buildSearchBoxAppBar(onChanged: (value) {
+            updateSearchResult(value,
+                context.read<ToDoItemsProvider>().upcomingItems);
+            setState(() => query = value);
+          }),
         actions: [
-          IconButton(
-            icon: const Icon(CupertinoIcons.search, size: 24),
-            onPressed: () {
-            },),
+          buildSearchIconButton(onPressed: () {
+            setState(() => toggleSearch());
+          })
         ],
       ),
       body: SafeArea(
-        child: Column(
+        child: (query.isNotEmpty)
+        ? buildSearchToDoResult()
+        : Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(

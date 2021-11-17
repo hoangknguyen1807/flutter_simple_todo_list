@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
+import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.dart';
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,8 @@ class TodayToDosPage extends StatefulWidget {
   _TodayToDosPageState createState() => _TodayToDosPageState();
 }
 
-class _TodayToDosPageState extends State<TodayToDosPage> {
+class _TodayToDosPageState extends State<TodayToDosPage>
+  with HasSearchBoxInAppBar {
 
   final dateFormat = DateFormat.yMMMEd();
   final today = DateTime.now();
@@ -25,16 +27,22 @@ class _TodayToDosPageState extends State<TodayToDosPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Today'),
+        title: (!isSearching) ? const Text('Today')
+          : buildSearchBoxAppBar(onChanged: (value) {
+              updateSearchResult(value,
+                  context.read<ToDoItemsProvider>().todayItems);
+              setState(() => query = value);
+          }),
         actions: [
-          IconButton(
-            icon: const Icon(CupertinoIcons.search, size: 24),
-            onPressed: () {
-            },),
+          buildSearchIconButton(onPressed: () {
+            setState(() => toggleSearch());
+          })
         ],
       ),
       body: SafeArea(
-        child: Column(
+        child: (query.isNotEmpty)
+        ? buildSearchToDoResult()
+        : Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(

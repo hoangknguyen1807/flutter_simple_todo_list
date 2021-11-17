@@ -10,6 +10,7 @@ import 'package:simple_todo_list/src/views/edit_todo_item_page/edit_todo_item_pa
 import 'package:simple_todo_list/src/views/home_page/done_todos_page/done_todos_page.dart';
 import 'package:simple_todo_list/src/views/home_page/overdue_todos_page/overdue_todos_page.dart';
 import 'package:simple_todo_list/src/views/home_page/upcoming_todos_page/upcoming_todos_page.dart';
+import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.dart';
 
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 
@@ -22,9 +23,11 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with HasSearchBoxInAppBar {
 
   bool _isLoading = false;
+
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -98,10 +101,9 @@ class _HomePageState extends State<HomePage> {
     );                
   }
 
-
   @override
   Widget build(BuildContext context) {
-    var toDoItemsProvider = context.watch<ToDoItemsProvider>();
+    final toDoItemsProvider = context.watch<ToDoItemsProvider>();
     final List<ToDoItemModel> todayItems = toDoItemsProvider.todayItems;
     final List<ToDoItemModel> upcomingItems = toDoItemsProvider.upcomingItems;
     final List<ToDoItemModel> overdueItems = toDoItemsProvider.pastItems;
@@ -110,49 +112,54 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 64,
-        title: const Padding(
-          padding: EdgeInsets.only(left: 6),
+        title: Padding(
+          padding: const EdgeInsets.only(left: 6),
           child: TextField(
-            style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
+            controller: _searchController,
+            onChanged: (value) {
+              updateSearchResult(value,
+                context.read<ToDoItemsProvider>().allItems);
+              setState(() => query = value);
+            },
+            style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
             cursorColor: Colors.white,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: UnderlineInputBorder(borderSide: BorderSide.none),
               hintText: 'Search your todos ...',
             )
           ),
         ),
         actions: [
-          IconButton(icon: const Icon(CupertinoIcons.arrow_2_circlepath),
-            onPressed: () {
-              _isLoading = true;
-              context.read<ToDoItemsProvider>().update();
-              Future.delayed(const Duration(milliseconds: 750), () {
-                setState(() => _isLoading = false);
-              });
-            },
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(CupertinoIcons.bell, size: 28)
-          ),
-          // PopupMenuButton(
-          //   enableFeedback: true,
-          //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          //   child: const Icon(Icons.more_vert_rounded),
-          //   itemBuilder: (context) {
-          //     return const [
-          //       PopupMenuItem(
-          //         height: 32,
-          //         padding: EdgeInsets.only(left: 14, top: 6, bottom: 6, right: 0),
-          //         child: Text('Delete')
-          //       )
-          //     ];
-          // }),
+          if (query.isEmpty)
+            IconButton(icon: const Icon(CupertinoIcons.arrow_2_circlepath),
+              onPressed: () {
+                _isLoading = true;
+                context.read<ToDoItemsProvider>().update();
+                Future.delayed(const Duration(milliseconds: 750), () {
+                  setState(() => _isLoading = false);
+                });
+              },
+            ),
+          if (query.isEmpty)
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(CupertinoIcons.bell, size: 28)
+            ),
+          if (query.isNotEmpty)
+            IconButton(
+              onPressed: () {
+                _searchController.clear();
+                setState(() => query = '');
+              },
+              icon: const Icon(CupertinoIcons.xmark)
+            ),
           const SizedBox(width: 8)
         ],
       ),
       body: SafeArea(
-        child: Container(
+        child: (query.isNotEmpty)
+        ? buildSearchToDoResult()
+        : Container(
           padding: const EdgeInsets.all(8),
           child: (_isLoading)
           ? const Center(
