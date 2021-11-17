@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
-import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.dart';
+import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.mixin.dart';
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 import 'package:provider/provider.dart';
 

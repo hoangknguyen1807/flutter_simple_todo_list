@@ -10,7 +10,7 @@ import 'package:simple_todo_list/src/views/edit_todo_item_page/edit_todo_item_pa
 import 'package:simple_todo_list/src/views/home_page/done_todos_page/done_todos_page.dart';
 import 'package:simple_todo_list/src/views/home_page/overdue_todos_page/overdue_todos_page.dart';
 import 'package:simple_todo_list/src/views/home_page/upcoming_todos_page/upcoming_todos_page.dart';
-import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.dart';
+import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.mixin.dart';
 
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 
