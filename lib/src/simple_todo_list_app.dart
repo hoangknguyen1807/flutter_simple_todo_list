@@ -1,15 +1,19 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_todo_list/src/commons/flutter_local_notifications_plugin.wrapper.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
+import 'package:simple_todo_list/src/utils/navigator_utils.dart';
 import 'models/todo_item.model.dart';
 import 'views/home_page/home_page.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import './commons/constants.dart' as constants;
-
 
 class SimpleToDoListApp extends StatefulWidget {
   const SimpleToDoListApp({ Key? key }) : super(key: key);
@@ -19,7 +23,7 @@ class SimpleToDoListApp extends StatefulWidget {
 }
 
 class _SimpleToDoListAppState extends State<SimpleToDoListApp> {
-  
+
   final List<ToDoItemModel> myMockItems = List.unmodifiable([
     ToDoItemModel('Go to sleep', DateTime(2021, 11, 13, 22), true),
     ToDoItemModel('English class', DateTime(2021, 11, 16, 14, 0), false, 'Learn on Zoom'),
@@ -29,6 +33,49 @@ class _SimpleToDoListAppState extends State<SimpleToDoListApp> {
     ToDoItemModel('Read book', DateTime(2021, 11, 18, 19, 0)),
     ToDoItemModel('Go jogging', DateTime(2021, 11, 19, 6, 0))
   ]);
+
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
+  void _getNotificationAppLaunchDetails() async {    
+    final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+      (kIsWeb || Platform.isLinux)
+      ? null
+      : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+    if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+      debugPrint(notificationAppLaunchDetails!.payload);
+    }
+  }
+
+  @override
+  void initState() {
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPluginWrapper.getInstance();
+
+    _getNotificationAppLaunchDetails();
+
+    // initialize the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings();
+
+    const InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid,
+        iOS: initializationSettingsIOS
+      );
+
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: _selectNotification
+    );
+
+    super.initState();
+  }
+
+  void _selectNotification(String? payload) {
+    debugPrint('notification payload: $payload');
+    NavigatorUtils.navigateToScreen(context, const HomePage());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +94,8 @@ class _SimpleToDoListAppState extends State<SimpleToDoListApp> {
           create: (context) => 
                     ToDoItemsProvider(allStoredItems.cast<ToDoItemModel>()),
           child: MaterialApp(
-            title: 'Simple ToDo List App',
+            debugShowCheckedModeBanner: false,
+            title: 'Simple ToDo List',
             theme: ThemeData(
               scaffoldBackgroundColor: Styles.scaffoldBackgroundColor,
               primarySwatch: Colors.green,

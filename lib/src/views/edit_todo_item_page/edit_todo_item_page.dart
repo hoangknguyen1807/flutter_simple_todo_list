@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:simple_todo_list/src/commons/flutter_local_notifications_plugin.wrapper.dart';
 import 'package:simple_todo_list/src/models/todo_item.model.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
@@ -108,6 +109,10 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
     }
   }
 
+  _zonedScheduleNotification(ToDoItemModel toDoItem) {
+    FlutterLocalNotificationsPluginWrapper.zonedScheduleNotification(toDoItem);
+  }
+
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context, initialTime: _selectedTime);
@@ -165,6 +170,11 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
       Navigator.of(context).pop();
     } else {
       toDoItemsProvider.saveToHive();
+    }
+
+    if (!_toDoModel.isDone &&
+      _toDoModel.occurTime.subtract(const Duration(minutes: 10)).isAfter(DateTime.now())) {
+      _zonedScheduleNotification(_toDoModel);
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -252,6 +262,8 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
 
   @override
   void initState() {
+    debugPrint(Intl.getCurrentLocale());
+
     _toDoModel = widget.toDoModel;
     _titleController = TextEditingController
                         .fromValue(TextEditingValue(text: _toDoModel.title));

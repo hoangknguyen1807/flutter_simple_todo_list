@@ -186,11 +186,11 @@ class _HomePageState extends State<HomePage> with HasSearchBoxInAppBar {
                   child: SingleChildScrollView(
                     child: Column(children: [
                       const SizedBox(height: 16),
-                      for (var toDoItem in overdueItems)
-                        ToDoItemCard(toDoItem, key: UniqueKey()),
                       for (var toDoItem in todayItems)
                         ToDoItemCard(toDoItem, key: UniqueKey()),
                       for (var toDoItem in upcomingItems)
+                        ToDoItemCard(toDoItem, key: UniqueKey()),
+                      for (var toDoItem in overdueItems)
                         ToDoItemCard(toDoItem, key: UniqueKey()),
                       for (var toDoItem in doneItems)
                         ToDoItemCard(toDoItem, key: UniqueKey()),

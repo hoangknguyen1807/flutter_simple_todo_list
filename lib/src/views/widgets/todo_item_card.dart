@@ -93,12 +93,13 @@ class _ToDoItemCardState extends State<ToDoItemCard> {
             ),
             const SizedBox(width: 4),
             Expanded(child: Container(
-              padding: const EdgeInsets.only(top: 10, bottom: 8),
+              padding: const EdgeInsets.only(top: 8, bottom: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(_toDoModel.title,
                     style: _getTextStyleForToDoLabel(_toDoModel)),
+                  const SizedBox(height: 2),
                   Text('🗓   ' +
                     (DateUtils.isSameDay(today, _toDoModel.occurTime)
                       ? 'Today' : dateFormat.format(_toDoModel.occurTime))

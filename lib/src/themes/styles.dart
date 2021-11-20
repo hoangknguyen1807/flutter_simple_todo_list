@@ -28,7 +28,7 @@ abstract class Styles {
   static const TextStyle listItemLabel = TextStyle(
     fontSize: 18,
     fontStyle: FontStyle.normal,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w500,
   );
 
   static const TextStyle overdueItemLabel = TextStyle(

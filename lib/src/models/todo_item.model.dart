@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:hive/hive.dart';
 
 part 'todo_item.model.g.dart';
@@ -52,4 +53,13 @@ class ToDoItemModel {
   }
 
   bool isOverdue() => occurTime.isBefore(DateTime.now()) && !_isDone;
+
+  String toJsonString() => jsonEncode(toMap());
+
+  Map<String, dynamic> toMap() => {
+    "title": _title,
+    "description": _description,
+    "occurTime": _occurTime.toIso8601String(),
+    "isDone": _isDone
+  };
 }
