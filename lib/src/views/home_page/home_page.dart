@@ -8,6 +8,7 @@ import 'package:simple_todo_list/src/themes/styles.dart';
 import 'package:simple_todo_list/src/utils/navigator_utils.dart';
 import 'package:simple_todo_list/src/views/edit_todo_item_page/edit_todo_item_page.dart';
 import 'package:simple_todo_list/src/views/home_page/done_todos_page/done_todos_page.dart';
+import 'package:simple_todo_list/src/views/home_page/notifications_page/notifications_page.dart';
 import 'package:simple_todo_list/src/views/home_page/overdue_todos_page/overdue_todos_page.dart';
 import 'package:simple_todo_list/src/views/home_page/upcoming_todos_page/upcoming_todos_page.dart';
 import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.mixin.dart';
@@ -101,6 +102,20 @@ class _HomePageState extends State<HomePage> with HasSearchBoxInAppBar {
     );                
   }
 
+  void _onTapNotificationBell() {
+    showModalBottomSheet(context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16)
+        )
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return const NotificationsSheet();
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     final toDoItemsProvider = context.watch<ToDoItemsProvider>();
@@ -142,7 +157,7 @@ class _HomePageState extends State<HomePage> with HasSearchBoxInAppBar {
             ),
           if (query.isEmpty)
             IconButton(
-              onPressed: () {},
+              onPressed: _onTapNotificationBell,
               icon: const Icon(CupertinoIcons.bell, size: 28)
             ),
           if (query.isNotEmpty)

@@ -44,6 +44,20 @@ abstract class Styles {
     decorationThickness: 1.5,
   );
 
+  static final ButtonStyle activeTextButtonStyle = ButtonStyle(
+    textStyle: MaterialStateProperty.all(const TextStyle(fontSize: 16)),
+    backgroundColor: MaterialStateProperty.all(Colors.green),
+    foregroundColor: MaterialStateProperty.all(Colors.white)
+  );
+
+  static final ButtonStyle inactiveTextButtonStyle = ButtonStyle(
+    shape: MaterialStateProperty.all(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+        side: const BorderSide(color: Colors.green)
+      ))
+  );
+
   static const Color dividerColor = Color(0xFFD9D9D9);
 
   static const Color scaffoldBackgroundColor = Color(0xfff0f0f0);
