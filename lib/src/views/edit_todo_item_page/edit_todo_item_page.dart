@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_todo_list/src/commons/flutter_local_notifications_plugin.wrapper.dart';
-import 'package:simple_todo_list/src/models/todo_item.model.dart';
+import 'package:simple_todo_list/src/models/local_notification/local_notification.model.dart';
+import 'package:simple_todo_list/src/models/todo_item/todo_item.model.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_todo_list/src/providers/notifications_provider.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 
 class EditToDoItemPage extends StatefulWidget {
@@ -37,6 +40,8 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
   late TimeOfDay _selectedTime;
 
   late bool _isItemDone;
+
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   void _selectDate() async {
     final ThemeData theme = Theme.of(context);
@@ -109,8 +114,25 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
     }
   }
 
-  _zonedScheduleNotification(ToDoItemModel toDoItem) {
-    FlutterLocalNotificationsPluginWrapper.zonedScheduleNotification(toDoItem);
+  _zonedScheduleNotification(ToDoItemModel oldToDo, ToDoItemModel newToDo) async{
+    final notiProvider = context.read<NotificationsProvider>();
+    try {
+      LocalNotificationModel findResult = notiProvider.allNotifications
+        .firstWhere((n) {
+          return n.title == oldToDo.title &&
+            n.body == FlutterLocalNotificationsPluginWrapper.dateJmFormat
+                      .format(oldToDo.occurTime);
+        });
+      if (findResult.scheduledTime.isAfter(DateTime.now())) {
+        notiProvider.remove(findResult);
+        flutterLocalNotificationsPlugin.cancel(findResult.id);
+      }
+    } on StateError catch (e) {
+      debugPrint(e.message);
+    }
+    
+    FlutterLocalNotificationsPluginWrapper.zonedScheduleNotification(
+      newToDo, notiProvider);
   }
 
   void _selectTime() async {
@@ -153,6 +175,10 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
         return;
     }
 
+    ToDoItemModel oldModel = ToDoItemModel(
+      _toDoModel.title, _toDoModel.occurTime,
+    );
+
     _toDoModel.title = _titleController.text;
     _toDoModel.description = _descriptionController.text;
     _toDoModel.occurTime = DateTime(
@@ -174,7 +200,7 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
 
     if (!_toDoModel.isDone &&
       _toDoModel.occurTime.subtract(const Duration(minutes: 10)).isAfter(DateTime.now())) {
-      _zonedScheduleNotification(_toDoModel);
+      _zonedScheduleNotification(oldModel, _toDoModel);
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -262,8 +288,6 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
 
   @override
   void initState() {
-    debugPrint(Intl.getCurrentLocale());
-
     _toDoModel = widget.toDoModel;
     _titleController = TextEditingController
                         .fromValue(TextEditingValue(text: _toDoModel.title));
@@ -276,6 +300,8 @@ class _EditToDoItemPageState extends State<EditToDoItemPage> {
             TextEditingValue(text: timeFormat.format(_selectedDate)));
     _selectedTime = TimeOfDay.fromDateTime(_toDoModel.occurTime);
     _isItemDone = _toDoModel.isDone;
+
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPluginWrapper.getPluginInstance();
     
     super.initState();
   }

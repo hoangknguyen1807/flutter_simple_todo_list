@@ -6,4 +6,8 @@ abstract class NavigatorUtils {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => screen));
   }
+
+  static void popUntilFirst(BuildContext context) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
 }

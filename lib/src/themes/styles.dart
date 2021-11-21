@@ -44,8 +44,17 @@ abstract class Styles {
     decorationThickness: 1.5,
   );
 
+  static const unreadItemTitle = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w600
+  );
+  
+  static const unreadItemSubtitle = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w600
+  );
+
   static final ButtonStyle activeTextButtonStyle = ButtonStyle(
-    textStyle: MaterialStateProperty.all(const TextStyle(fontSize: 16)),
     backgroundColor: MaterialStateProperty.all(Colors.green),
     foregroundColor: MaterialStateProperty.all(Colors.white)
   );

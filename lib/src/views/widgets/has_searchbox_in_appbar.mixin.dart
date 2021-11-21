@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_todo_list/src/models/todo_item.model.dart';
+import 'package:simple_todo_list/src/models/todo_item/todo_item.model.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
 import 'todo_item_card.dart';
 

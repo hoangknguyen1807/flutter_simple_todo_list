@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:simple_todo_list/src/commons/constants.dart' as constants;
-import 'package:simple_todo_list/src/models/todo_item.model.dart';
+import 'package:simple_todo_list/src/models/todo_item/todo_item.model.dart';
 
 class ToDoItemsProvider extends ChangeNotifier {
 

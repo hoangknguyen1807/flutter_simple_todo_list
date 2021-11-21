@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_todo_list/src/models/todo_item.model.dart';
+import 'package:simple_todo_list/src/models/todo_item/todo_item.model.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
 import 'package:simple_todo_list/src/utils/navigator_utils.dart';
