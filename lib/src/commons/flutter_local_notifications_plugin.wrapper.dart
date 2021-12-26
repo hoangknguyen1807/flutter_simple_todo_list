@@ -1,12 +1,10 @@
 
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:simple_todo_list/src/models/local_notification/local_notification.model.dart';
 import 'package:simple_todo_list/src/providers/notifications_provider.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:simple_todo_list/src/models/todo_item/todo_item.model.dart';
 

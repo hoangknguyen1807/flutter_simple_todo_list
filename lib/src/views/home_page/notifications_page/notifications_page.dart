@@ -36,7 +36,7 @@ class _NotificationsSheetState extends State<NotificationsSheet> {
     final receivedNotifications = notificationProvider.receivedNotifications;
     final unreadNotifications = notificationProvider.unreadNotifications;
 
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).copyWith().size.height * 0.75,
       child: Column(children: [
           AppBar(

@@ -10,7 +10,6 @@ import 'package:simple_todo_list/src/models/local_notification/local_notificatio
 import 'package:simple_todo_list/src/providers/notifications_provider.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
-import 'package:simple_todo_list/src/utils/navigator_utils.dart';
 import 'models/todo_item/todo_item.model.dart';
 import 'views/home_page/home_page.dart';
 import 'package:hive/hive.dart';
