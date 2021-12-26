@@ -20,7 +20,7 @@ void main() async {
   Hive.registerAdapter(LocalNotificationModelAdapter());
   await Hive.initFlutter();
   await Hive.openBox(constants.todosBoxName);
-  runApp(const SimpleToDoListApp());
+  runApp(SimpleToDoListApp());
 }
 
 Future<void> configureLocalTimeZone() async {

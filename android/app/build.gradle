@@ -57,6 +57,22 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    flavorDimensions "app"
+
+    productFlavors {
+        develop {
+            dimension "app"
+            resValue "string", "app_name", "Simple ToDo Test"
+            applicationIdSuffix ".test"
+            versionNameSuffix "-test"
+        }
+
+        production {
+            dimension "app"
+            resValue "string", "app_name", "Simple ToDo"
+        }
+    }
 }
 
 flutter {
