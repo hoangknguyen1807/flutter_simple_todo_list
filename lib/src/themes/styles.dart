@@ -44,6 +44,29 @@ abstract class Styles {
     decorationThickness: 1.5,
   );
 
+  static const unreadItemTitle = TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w600
+  );
+  
+  static const unreadItemSubtitle = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w600
+  );
+
+  static final ButtonStyle activeTextButtonStyle = ButtonStyle(
+    backgroundColor: MaterialStateProperty.all(Colors.green),
+    foregroundColor: MaterialStateProperty.all(Colors.white)
+  );
+
+  static final ButtonStyle inactiveTextButtonStyle = ButtonStyle(
+    shape: MaterialStateProperty.all(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+        side: const BorderSide(color: Colors.green)
+      ))
+  );
+
   static const Color dividerColor = Color(0xFFD9D9D9);
 
   static const Color scaffoldBackgroundColor = Color(0xfff0f0f0);

@@ -6,10 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_todo_list/src/commons/flutter_local_notifications_plugin.wrapper.dart';
+import 'package:simple_todo_list/src/models/local_notification/local_notification.model.dart';
+import 'package:simple_todo_list/src/providers/notifications_provider.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
-import 'package:simple_todo_list/src/utils/navigator_utils.dart';
-import 'models/todo_item.model.dart';
+import 'models/todo_item/todo_item.model.dart';
 import 'views/home_page/home_page.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -43,13 +44,15 @@ class _SimpleToDoListAppState extends State<SimpleToDoListApp> {
       : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
     if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-      debugPrint(notificationAppLaunchDetails!.payload);
+      final payload = notificationAppLaunchDetails!.payload;
+      debugPrint(payload);
+      FlutterLocalNotificationsPluginWrapper.getNotificationSubject().add(payload);
     }
   }
 
   @override
   void initState() {
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPluginWrapper.getInstance();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPluginWrapper.getPluginInstance();
 
     _getNotificationAppLaunchDetails();
 
@@ -74,7 +77,7 @@ class _SimpleToDoListAppState extends State<SimpleToDoListApp> {
 
   void _selectNotification(String? payload) {
     debugPrint('notification payload: $payload');
-    NavigatorUtils.navigateToScreen(context, const HomePage());
+    FlutterLocalNotificationsPluginWrapper.getNotificationSubject().add(payload);
   }
 
   @override
@@ -85,14 +88,20 @@ class _SimpleToDoListAppState extends State<SimpleToDoListApp> {
     );
 
     return ValueListenableBuilder<Box>(
-      valueListenable: Hive.box('todosBox').listenable(),
+      valueListenable: Hive.box(constants.todosBoxName).listenable(),
       builder: (context, box, widget) {
         List<dynamic> allStoredItems = box.get(constants.todoItemsKey,
           defaultValue: <ToDoItemModel>[]);
+        List<dynamic> allStoredNotifications = box.get(constants.notificationsKey,
+          defaultValue: <LocalNotificationModel>[]);
 
-        return ChangeNotifierProvider(
-          create: (context) => 
-                    ToDoItemsProvider(allStoredItems.cast<ToDoItemModel>()),
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => 
+              ToDoItemsProvider(allStoredItems.cast<ToDoItemModel>())),
+            ChangeNotifierProvider(create: (context) => 
+              NotificationsProvider(allStoredNotifications.cast<LocalNotificationModel>()))
+          ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Simple ToDo List',

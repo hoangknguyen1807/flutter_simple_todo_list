@@ -2,15 +2,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_todo_list/src/models/todo_item.model.dart';
+import 'package:simple_todo_list/src/commons/flutter_local_notifications_plugin.wrapper.dart';
+import 'package:simple_todo_list/src/models/todo_item/todo_item.model.dart';
+import 'package:simple_todo_list/src/providers/notifications_provider.dart';
 import 'package:simple_todo_list/src/providers/todo_items_provider.dart';
 import 'package:simple_todo_list/src/themes/styles.dart';
 import 'package:simple_todo_list/src/utils/navigator_utils.dart';
 import 'package:simple_todo_list/src/views/edit_todo_item_page/edit_todo_item_page.dart';
 import 'package:simple_todo_list/src/views/home_page/done_todos_page/done_todos_page.dart';
+import 'package:simple_todo_list/src/views/home_page/notifications_page/notifications_page.dart';
 import 'package:simple_todo_list/src/views/home_page/overdue_todos_page/overdue_todos_page.dart';
 import 'package:simple_todo_list/src/views/home_page/upcoming_todos_page/upcoming_todos_page.dart';
 import 'package:simple_todo_list/src/views/widgets/has_searchbox_in_appbar.mixin.dart';
+import 'package:simple_todo_list/src/views/widgets/my_custom_badge.dart';
 
 import 'package:simple_todo_list/src/views/widgets/todo_item_card.dart';
 
@@ -31,6 +35,16 @@ class _HomePageState extends State<HomePage> with HasSearchBoxInAppBar {
 
   @override
   void initState() {
+    final notifications$ = FlutterLocalNotificationsPluginWrapper.getNotificationSubject();
+    notifications$.stream.listen((payload) { 
+      if (payload?.isNotEmpty ?? false) {
+        final notiProvider = context.read<NotificationsProvider>();
+        notiProvider.allNotifications
+          .firstWhere((n) => n.id == int.parse(payload!)).isRead = true;
+        notiProvider.saveToHive();
+      }
+    });
+
     super.initState();
   }
 
@@ -101,6 +115,18 @@ class _HomePageState extends State<HomePage> with HasSearchBoxInAppBar {
     );                
   }
 
+  void _onTapNotificationBell() {
+    showModalBottomSheet(context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16)
+        )
+      ),
+      isScrollControlled: true,
+      builder: (context) => const NotificationsSheet());
+  }
+
   @override
   Widget build(BuildContext context) {
     final toDoItemsProvider = context.watch<ToDoItemsProvider>();
@@ -108,6 +134,9 @@ class _HomePageState extends State<HomePage> with HasSearchBoxInAppBar {
     final List<ToDoItemModel> upcomingItems = toDoItemsProvider.upcomingItems;
     final List<ToDoItemModel> overdueItems = toDoItemsProvider.pastItems;
     final List<ToDoItemModel> doneItems = toDoItemsProvider.doneItems;
+
+    final notiProvider = context.watch<NotificationsProvider>();
+    final unreadCount = notiProvider.unreadNotifications.length;
 
     return Scaffold(
       appBar: AppBar(
@@ -142,8 +171,13 @@ class _HomePageState extends State<HomePage> with HasSearchBoxInAppBar {
             ),
           if (query.isEmpty)
             IconButton(
-              onPressed: () {},
-              icon: const Icon(CupertinoIcons.bell, size: 28)
+              onPressed: _onTapNotificationBell,
+              icon: (unreadCount > 0)
+                ? MyCustomBadge(
+                  child: const Icon(CupertinoIcons.bell_fill, size: 24),
+                  content: unreadCount.toString()
+                )
+                : const Icon(CupertinoIcons.bell, size: 24),
             ),
           if (query.isNotEmpty)
             IconButton(

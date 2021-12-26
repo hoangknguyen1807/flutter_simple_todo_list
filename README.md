@@ -1,6 +1,7 @@
 # simple_todo_list
 
-A new Flutter project.
+A simple Flutter mobile project for creating and reminding to-do tasks
+Author: Nguyen Khanh Hoang - 1712457
 
 ## Getting Started
 
