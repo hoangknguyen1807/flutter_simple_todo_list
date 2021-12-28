@@ -8,8 +8,8 @@ enum DateField {
   SECOND
 }
 
-class MyDateUtils {
-  int truncatedCompare(DateTime d1, DateTime d2, [DateField toField = DateField.SECOND]) {
+abstract class MyDateUtils {
+  static int truncatedCompare(DateTime d1, DateTime d2, [DateField toField = DateField.SECOND]) {
     int result = d1.year.compareTo(d2.year);
 
     if (toField == DateField.YEAR) {

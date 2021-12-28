@@ -15,9 +15,13 @@ import 'views/home_page/home_page.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import './commons/constants.dart' as constants;
+import './commons/environments.dart' as environments;
+
 
 class SimpleToDoListApp extends StatefulWidget {
-  const SimpleToDoListApp({ Key? key }) : super(key: key);
+  SimpleToDoListApp({ Key? key }) : super(key: key);
+
+  final String appTitle = 'Simple ToDo List' + environments.APP_NAME_SUFFIX[environments.env]!;
 
   @override
   _SimpleToDoListAppState createState() => _SimpleToDoListAppState();
@@ -89,7 +93,7 @@ class _SimpleToDoListAppState extends State<SimpleToDoListApp> {
 
     return ValueListenableBuilder<Box>(
       valueListenable: Hive.box(constants.todosBoxName).listenable(),
-      builder: (context, box, widget) {
+      builder: (context, box, widg) {
         List<dynamic> allStoredItems = box.get(constants.todoItemsKey,
           defaultValue: <ToDoItemModel>[]);
         List<dynamic> allStoredNotifications = box.get(constants.notificationsKey,
@@ -104,7 +108,7 @@ class _SimpleToDoListAppState extends State<SimpleToDoListApp> {
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Simple ToDo List',
+            title: widget.appTitle,
             theme: ThemeData(
               scaffoldBackgroundColor: Styles.scaffoldBackgroundColor,
               primarySwatch: Colors.green,
